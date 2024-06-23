@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'coreapi',
     'api',
     'rest_framework_simplejwt',
+    'supabase'
 ]
 
 MIDDLEWARE = [

@@ -10,8 +10,12 @@ import requests
 from rest_framework.utils import json
 from django.shortcuts import render
 from django.http import HttpResponse
+import os
+from supabase import create_client, Client
 
-
+url: str = os.environ.get("SUPABASE_URL","https://hedwmixgqtmxzppsucbn.supabase.co")
+key: str = os.environ.get("SUPABASE_KEY","eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhlZHdtaXhncXRteHpwcHN1Y2JuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTc3NzI1MDMsImV4cCI6MjAzMzM0ODUwM30.f9vEpMtNGIFU7xO11w51Ct9CDVFY78RndNnNg_ntseI")
+supabase: Client = create_client(url, key)
 
 
 # Create your views here.
@@ -31,9 +35,13 @@ class IndexView(APIView):
     def get(self, request, format=None):
         return render(request, 'api/index.html')
 def PruebaView(request):
-    headers = {'x-api-key': 'MuHOjsQ76J1ImP5QU4XyD27QdeieqTH589NbU3Uo','Content-Type': 'text/html; charset=utf-8'}
-    response = requests.get('https://qic534o8o0.execute-api.us-east-1.amazonaws.com/ventas/documentacion', headers=headers)
-    return HttpResponse(response.content)
+    
+    
+    response = supabase.table('api_usuario').select("*").eq('username', 'admins',).eq('password', 'pbkdf2_sha256$600000$9sDL2XFqPjtgWltvCXjjGb$5JW6Fq0aMlWKYdzzQA0kUV+1BcnBPzvlcCtIyXYGBb8=').execute()
+    if response != '':
+        return HttpResponse(response.json())
+    else:
+        return HttpResponse("Credenciales inválidas")
 
 def LoginUsuario(request):
     return render(request, 'api/login.html')
